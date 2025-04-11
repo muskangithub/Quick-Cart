@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { InboxIcon as EnvelopeIcon, KeyIcon } from "lucide-react"
+import { toast } from 'sonner';
 
 export default function Login() {
   const [email, setEmail] = useState("")
@@ -35,18 +36,19 @@ export default function Login() {
 
       if (result.name) {
         localStorage.setItem("user", JSON.stringify(result))
-        router.push("/table")
+        toast.success("loggedIn successfully");
+        router.push("/")
       } else if (User1) {
-        router.push("/table")
+        toast.success("loggedIn successfully");
+        router.push("/")
       } else if (!User1) {
-        alert("First register the user")
-        router.push("/register")
+        toast.error("First register the user");
       } else {
-        alert("Incorrect details")
+         toast.error("Incorrect details");
       }
     } catch (error) {
       console.error("Login error:", error)
-      alert("An error occurred during login")
+      toast.error("An error occurred during login")
     } finally {
       setIsLoading(false)
     }

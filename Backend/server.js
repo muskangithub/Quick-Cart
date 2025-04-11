@@ -4,6 +4,7 @@ require("./db/config");
 const pool = require("./db/db");
 
 const cors = require("cors");
+app.use("/uploads", express.static("uploads"));
 
 const app = express();
 
@@ -12,6 +13,7 @@ const port = 5000;
 app.use(cors());
 
 const user = require("./db/user");
+const Product = require("./db/product");
 
 app.use(express.json());
 app.set("view engine", "ejs");
@@ -86,6 +88,17 @@ app.get("/employees", async (req, res) => {
     res.json(employeesData?.rows);
   } catch (error) {
     console.log("error", error);
+  }
+});
+
+//get product
+app.get("/product", async (req, resp) => {
+  let products = await Product.find();
+  console.log(products, "products");
+  if (products.length > 0) {
+    resp.send(products);
+  } else {
+    resp.send({ result: "no products found" });
   }
 });
 
