@@ -4,13 +4,13 @@ require("./db/config");
 const pool = require("./db/db");
 
 const cors = require("cors");
-app.use("/uploads", express.static("uploads"));
 
 const app = express();
 
 const port = 5000;
 
 app.use(cors());
+app.use("/uploads", express.static("uploads"));
 
 const user = require("./db/user");
 const Product = require("./db/product");
@@ -97,6 +97,16 @@ app.get("/product", async (req, resp) => {
   console.log(products, "products");
   if (products.length > 0) {
     resp.send(products);
+  } else {
+    resp.send({ result: "no products found" });
+  }
+});
+
+//get single product
+app.get("/product/:id", async (req, resp) => {
+  let result = await Product.findOne({ _id: req.params.id });
+  if (result) {
+    resp.send(result);
   } else {
     resp.send({ result: "no products found" });
   }
