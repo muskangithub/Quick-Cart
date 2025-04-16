@@ -164,22 +164,24 @@ app.post(
         description,
         features,
         type = "USER", // default value
-        ImageUrl: imageUrl, // This may be provided instead of a file
+        ImageUrl, // May be a base64 or URL
       } = req.body;
 
-      // Determine final image path
-      const imageUrl = req.file ? req.file.path : ImageUrl;
+      // Determine final image source: either uploaded file or base64/url
+      const imageUrl = req.file !== undefined ? req.file.path : ImageUrl;
+      console.log();
 
-      // Parse features if it's sent as a JSON string (since it might be sent that way from frontend)
+      // Parse features if it's a JSON string
       const parsedFeatures =
         typeof features === "string" ? JSON.parse(features) : features;
 
+      // Create the new product (✅ match schema key: ImageUrl with capital 'I')
       const product = new Product({
         name,
         price,
         company,
         category,
-        imageUrl,
+        ImageUrl: imageUrl, // <-- correct field name here
         userId,
         description,
         features: parsedFeatures || [],
