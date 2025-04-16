@@ -1,9 +1,10 @@
 const express = require("express");
-const mongoose = require("mongoose");
 require("./db/config");
 const pool = require("./db/db");
 const jwt = require("jsonwebtoken");
 const Jwtkey = "quickcart";
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
 const cors = require("cors");
 
@@ -145,6 +146,56 @@ app.get("/admin", async (req, resp) => {
     resp.send({ result: "no admin found" });
   }
 });
+
+app.post(
+  "/add-product",
+  upload.single("image"), // Accept image file, optional if URL is provided
+  async (req, resp) => {
+    try {
+      console.log("Request body:", req.body);
+      console.log("Uploaded file:", req.file);
+
+      const {
+        name,
+        company,
+        category,
+        price,
+        userId,
+        description,
+        features,
+        type = "USER", // default value
+        ImageUrl: imageUrl, // This may be provided instead of a file
+      } = req.body;
+
+      // Determine final image path
+      const imageUrl = req.file ? req.file.path : ImageUrl;
+
+      // Parse features if it's sent as a JSON string (since it might be sent that way from frontend)
+      const parsedFeatures =
+        typeof features === "string" ? JSON.parse(features) : features;
+
+      const product = new Product({
+        name,
+        price,
+        company,
+        category,
+        imageUrl,
+        userId,
+        description,
+        features: parsedFeatures || [],
+        type,
+      });
+
+      const result = await product.save();
+
+      console.log("Product saved:", result);
+      resp.status(201).send(result);
+    } catch (error) {
+      console.error("Error saving product:", error);
+      resp.status(500).send({ error: "Failed to add product" });
+    }
+  }
+);
 
 app.delete("/admin/:id", async (req, resp) => {
   let result = await AdminModel.deleteOne({ _id: req.params.id });
