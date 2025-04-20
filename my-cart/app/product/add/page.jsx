@@ -59,45 +59,51 @@ export default function AddProduct() {
       reader.onloadend = () => {
         setImagePreview(reader.result)
         // In a real implementation, you would set imageUrl to the URL returned from your server
-        setImageUrl("uploaded-image-url.jpg") // Placeholder
+        setImageUrl(file) // Placeholder
       }
       reader.readAsDataURL(file)
     }
   }
 
-  const handleAddProduct = async (e) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+const handleAddProduct = async (e) => {
+  e.preventDefault()
+  setIsSubmitting(true)
 
-    try {
-      const product = {
-        name,
-        price,
-        category,
-        company,
-        ImageUrl: imageUrl, // Note: The schema uses "ImageUrl" with capital I
-        description,
-        features,
-        type: "USER", // Default value from schema
-        userId: "current-user-id", // This would come from authentication in a real app
-        date: new Date(),
-      }
+  try {
+    const formData = new FormData()
+    formData.append("name", name)
+    formData.append("price", price)
+    formData.append("category", category)
+    formData.append("company", company)
+    formData.append("description", description)
+    formData.append("type", "USER")
+    formData.append("userId", "current-user-id")
+    formData.append("features", JSON.stringify(features))
 
-      const response = await axios.post("http://localhost:5000/add-product", JSON.stringify(product), {
-        headers: { "Content-Type": "application/json" },
-      })
-
-      const result = response.data
-      console.log(result)
-      toast.success("Product added successfully")
-      router.push("/admin/products")
-    } catch (error) {
-      console.error(error)
-      toast.error("Failed to add product. Please try again.")
-    } finally {
-      setIsSubmitting(false)
+    if (imageUrl instanceof File) {
+      formData.append("ImageUrl", imageUrl) // Match the backend field name
+    } else if (typeof imageUrl === "string") {
+      formData.append("ImageUrl", imageUrl) // In case you're providing a direct URL
     }
+
+    const response = await axios.post("http://localhost:5000/add-product", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+
+    toast.success("Product added successfully")
+    console.log(response.data)
+    // router.push("/admin/products")
+  } catch (error) {
+    console.error(error)
+    toast.error("Failed to add product. Please try again.")
+  } finally {
+    setIsSubmitting(false)
   }
+}
+
+
 
   return (
     <div className="container mx-auto py-8">
@@ -254,7 +260,7 @@ export default function AddProduct() {
                         variant="outline"
                         onClick={() => {
                           setImagePreview(null)
-                          setImageUrl("")
+                          setImageUrl('')
                         }}
                       >
                         Remove Image
@@ -288,19 +294,6 @@ export default function AddProduct() {
                       </div>
                     </div>
                   )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="imageUrl" className="font-medium">
-                    Or Enter Image URL
-                  </Label>
-                  <Input
-                    id="imageUrl"
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                    placeholder="https://example.com/product-image.jpg"
-                    className="h-11"
-                  />
                 </div>
               </div>
             </TabsContent>

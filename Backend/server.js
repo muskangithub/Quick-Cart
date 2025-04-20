@@ -149,8 +149,8 @@ app.get("/admin", async (req, resp) => {
 
 app.post(
   "/add-product",
-  upload.single("image"), // Accept image file, optional if URL is provided
-  async (req, resp) => {
+  upload.single("ImageUrl"), // 👈 match frontend field name
+  async (req, res) => {
     try {
       console.log("Request body:", req.body);
       console.log("Uploaded file:", req.file);
@@ -163,38 +163,39 @@ app.post(
         userId,
         description,
         features,
-        type = "USER", // default value
-        ImageUrl, // May be a base64 or URL
+        type = "USER",
       } = req.body;
+      console.log(req.file.path, "req.get");
 
-      // Determine final image source: either uploaded file or base64/url
-      const imageUrl = req.file !== undefined ? req.file.path : ImageUrl;
-      console.log();
+      // Determine image URL: if uploaded, use path; else null
+      const imageUrl = req.file ? req.file.path : null;
 
-      // Parse features if it's a JSON string
+      console.log(imageUrl, "imageUrl");
+
+      // Parse features if needed
       const parsedFeatures =
         typeof features === "string" ? JSON.parse(features) : features;
 
-      // Create the new product (✅ match schema key: ImageUrl with capital 'I')
+      // Create the product
       const product = new Product({
         name,
         price,
         company,
         category,
-        ImageUrl: imageUrl, // <-- correct field name here
         userId,
         description,
         features: parsedFeatures || [],
         type,
+        ImageUrl: imageUrl, // stored as a full URL
       });
 
       const result = await product.save();
 
       console.log("Product saved:", result);
-      resp.status(201).send(result);
+      res.status(201).send(result);
     } catch (error) {
       console.error("Error saving product:", error);
-      resp.status(500).send({ error: "Failed to add product" });
+      res.status(500).send({ error: "Failed to add product" });
     }
   }
 );
