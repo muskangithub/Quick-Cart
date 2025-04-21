@@ -30,7 +30,6 @@ export default function Register() {
     setIsLoading(true)
 
     try {
-      console.log(name, email, password)
       let result = await fetch("http://localhost:5000/register", {
         method: "post",
         body: JSON.stringify({
@@ -48,7 +47,6 @@ export default function Register() {
       })
 
       result = await result.json()
-      console.log(result)
 
       if (result.name) {
         const test = result.email
@@ -62,7 +60,6 @@ export default function Register() {
         alert("That email already exists!")
       }
     } catch (error) {
-      console.error("Registration error:", error)
       alert("An error occurred during registration")
     } finally {
       setIsLoading(false)

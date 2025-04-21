@@ -47,7 +47,6 @@ export default function ProductDetails() {
       toast.error("Failed to fetch products");
     }
   };
-  console.log(productsDetail, "detailll");
   const [quantity, setQuantity] = useState(1);
 
   const incrementQuantity = () => setQuantity((prev) => prev + 1);

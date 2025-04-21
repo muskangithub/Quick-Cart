@@ -34,7 +34,6 @@ export default function Page() {
       });
       setProducts(response.data);
     } catch (error) {
-      console.log(error,"error")
       toast.error("Failed to fetch products");
     }
   };

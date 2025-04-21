@@ -41,7 +41,6 @@ app.post("/register", async (req, resp) => {
     let User = new user(req.body);
     let result = await User.save();
     result = result.toObject();
-    console.log(result, "result");
     resp.send(result);
   }
 });
@@ -128,8 +127,6 @@ app.post("/add-admin", authPage(["ADMIN"]), async (req, resp) => {
   let admin = new AdminModel({ name, password, type, status, email, date });
   let result = await admin.save();
 
-  console.log(result);
-
   jwt.sign({ result }, Jwtkey, { expiresIn: "2h" }, (err, token) => {
     if (err) {
       resp.send({ result: "something went wrong" });
@@ -152,9 +149,6 @@ app.post(
   upload.single("ImageUrl"), // 👈 match frontend field name
   async (req, res) => {
     try {
-      console.log("Request body:", req.body);
-      console.log("Uploaded file:", req.file);
-
       const {
         name,
         company,
@@ -165,12 +159,9 @@ app.post(
         features,
         type = "USER",
       } = req.body;
-      console.log(req.file.path, "req.get");
 
       // Determine image URL: if uploaded, use path; else null
       const imageUrl = req.file ? req.file.path : null;
-
-      console.log(imageUrl, "imageUrl");
 
       // Parse features if needed
       const parsedFeatures =
@@ -190,8 +181,6 @@ app.post(
       });
 
       const result = await product.save();
-
-      console.log("Product saved:", result);
       res.status(201).send(result);
     } catch (error) {
       console.error("Error saving product:", error);
@@ -202,7 +191,6 @@ app.post(
 
 app.delete("/admin/:id", async (req, resp) => {
   let result = await AdminModel.deleteOne({ _id: req.params.id });
-  console.log(result);
   resp.send(result);
 });
 

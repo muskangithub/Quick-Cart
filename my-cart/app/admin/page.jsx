@@ -54,14 +54,12 @@ export default function AddAdmin() {
       );
 
       const result = response.data;
-      console.log(result);
       localStorage.setItem("type", JSON.stringify(result.type));
       localStorage.setItem("token", JSON.stringify(result.auth));
  toast.success("Admin added successfully");
 
       router.push("/admin/list");
     } catch (error) {
-      console.error(error);
        toast.error("Failed to add admin. Please try again.");
     } finally {
       setIsSubmitting(false);

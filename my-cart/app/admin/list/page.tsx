@@ -58,7 +58,6 @@ const ListAdmin = () => {
       });
       const result = response.data;
       setAdmins(result);
-      console.log("API data loaded:", result);
     } catch (error) {
       toast.error("Using sample data - API connection failed");
     } finally {
@@ -108,7 +107,6 @@ const ListAdmin = () => {
         getAdmin();
       }
     } catch (error) {
-      console.error("Failed to delete admin:", error);
       setAdmins(admins.filter((admin) => admin._id !== id));
       toast("Admin removed from list (simulated deletion)");
     }

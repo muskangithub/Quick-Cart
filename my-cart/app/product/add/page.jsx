@@ -93,10 +93,8 @@ const handleAddProduct = async (e) => {
     })
 
     toast.success("Product added successfully")
-    console.log(response.data)
     // router.push("/admin/products")
   } catch (error) {
-    console.error(error)
     toast.error("Failed to add product. Please try again.")
   } finally {
     setIsSubmitting(false)

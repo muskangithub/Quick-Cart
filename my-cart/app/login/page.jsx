@@ -21,7 +21,6 @@ export default function Login() {
     setIsLoading(true)
 
     try {
-      console.log(email, password)
       let result = await fetch("http://localhost:5000/login", {
         method: "POST",
         body: JSON.stringify({ email, password }),
@@ -31,7 +30,6 @@ export default function Login() {
       })
 
       result = await result.json()
-      console.log(result)
       const User1 = localStorage.getItem("user")
 
       if (result.name) {
@@ -47,7 +45,6 @@ export default function Login() {
          toast.error("Incorrect details");
       }
     } catch (error) {
-      console.error("Login error:", error)
       toast.error("An error occurred during login")
     } finally {
       setIsLoading(false)
