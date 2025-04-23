@@ -41,7 +41,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function AdminDashboard() {
+export default function Dashboard() {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   return (

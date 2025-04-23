@@ -189,9 +189,19 @@ app.post(
   }
 );
 
-app.delete("/admin/:id", async (req, resp) => {
-  let result = await AdminModel.deleteOne({ _id: req.params.id });
-  resp.send(result);
+const mongoose = require("mongoose");
+
+app.delete("/admin/:id", async (req, res) => {
+  console.log("Delete called with ID:", req.params.id);
+
+  try {
+    const result = await AdminModel.deleteOne({ _id: req.params.id });
+    console.log("Delete result:", result);
+    res.status(200).json(result); // MAKE SURE to send a response
+  } catch (err) {
+    console.error("Error during delete:", err);
+    res.status(500).json({ error: "Something went wrong" });
+  }
 });
 
 function authPage(permissions) {

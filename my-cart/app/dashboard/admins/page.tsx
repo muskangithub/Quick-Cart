@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   MoreHorizontal,
@@ -20,24 +20,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -54,9 +36,40 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import axios from "axios";
+import { toast } from "sonner";
+import AdminTable from "./admin-table";
 
-export function AdminsPanel() {
+export default function AdminsPanel() {
   const [isAddAdminOpen, setIsAddAdminOpen] = useState(false);
+  const [admins, setAdmins] = useState([]);
+
+  useEffect(() => {
+    getAdmins();
+  }, []);
+
+  const getAdmins = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/admin", {
+        headers: {
+          "Content-Type": "application/json",
+          // authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`
+        },
+      });
+      setAdmins(response.data);
+    } catch (error) {
+      toast.error("Failed to fetch products");
+    }
+  };
+  const deleteAdmin = async (id: string) => {
+    try {
+      await axios.delete(`http://localhost:5000/admin/${id}`);
+      toast.success("Admin deleted");
+      getAdmins();
+    } catch (error) {
+      toast.error("Failed to delete admin");
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -173,127 +186,10 @@ export function AdminsPanel() {
             </div>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Last Active</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {adminUsers.map((admin) => (
-                  <TableRow key={admin.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarImage
-                            src={admin.avatar || "/placeholder.svg"}
-                            alt={admin.name}
-                          />
-                          <AvatarFallback>
-                            {admin.name.substring(0, 2).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium">{admin.name}</p>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>{admin.email}</TableCell>
-                    <TableCell>{admin.role}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          admin.status === "Active" ? "default" : "secondary"
-                        }
-                      >
-                        {admin.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{admin.lastActive}</TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Actions</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem>Edit details</DropdownMenuItem>
-                          <DropdownMenuItem>
-                            Change permissions
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>Reset password</DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive">
-                            <Trash className="mr-2 h-4 w-4" />
-                            <span>Delete admin</span>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <AdminTable admins={admins} deleteAdmin={deleteAdmin} />
           </CardContent>
         </Card>
       </div>
     </div>
   );
 }
-
-// Sample Data
-const adminUsers = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john.doe@example.com",
-    role: "Super Admin",
-    status: "Active",
-    lastActive: "Just now",
-    avatar: "/placeholder.svg?height=40&width=40",
-  },
-  {
-    id: 2,
-    name: "Sarah Smith",
-    email: "sarah.smith@example.com",
-    role: "Admin",
-    status: "Active",
-    lastActive: "2 hours ago",
-    avatar: "/placeholder.svg?height=40&width=40",
-  },
-  {
-    id: 3,
-    name: "Mike Johnson",
-    email: "mike.johnson@example.com",
-    role: "Editor",
-    status: "Active",
-    lastActive: "Yesterday",
-    avatar: "/placeholder.svg?height=40&width=40",
-  },
-  {
-    id: 4,
-    name: "Lisa Wong",
-    email: "lisa.wong@example.com",
-    role: "Admin",
-    status: "Inactive",
-    lastActive: "2 weeks ago",
-    avatar: "/placeholder.svg?height=40&width=40",
-  },
-  {
-    id: 5,
-    name: "Alex Brown",
-    email: "alex.brown@example.com",
-    role: "Editor",
-    status: "Active",
-    lastActive: "3 days ago",
-    avatar: "/placeholder.svg?height=40&width=40",
-  },
-];
