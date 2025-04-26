@@ -1,33 +1,20 @@
 "use client";
-
-import { useEffect, useState } from "react";
-import {
-  ArrowLeft,
-  MoreHorizontal,
-  Search,
-  Trash,
-  UserPlus,
-} from "lucide-react";
-import Link from "next/link";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -37,12 +24,58 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import axios from "axios";
+import { ArrowLeft, Search, UserPlus } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import AdminTable from "./admin-table";
 
 export default function AdminsPanel() {
   const [isAddAdminOpen, setIsAddAdminOpen] = useState(false);
   const [admins, setAdmins] = useState([]);
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [type, setType] = useState("");
+  const [status, setStatus] = useState("");
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+
+  const handleAddAdmin = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const user = {
+        name,
+        password,
+        type,
+        status,
+        email,
+        date: new Date(),
+      };
+
+      const response = await axios.post(
+        "http://localhost:5000/add-admin",
+        JSON.stringify(user),
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const result = response.data;
+      localStorage.setItem("type", JSON.stringify(result.type));
+      localStorage.setItem("token", JSON.stringify(result.auth));
+      toast.success("Admin added successfully");
+
+      getAdmins();
+    } catch (error) {
+      toast.error("Failed to add admin. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     getAdmins();
@@ -95,72 +128,96 @@ export default function AdminsPanel() {
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add New Admin</DialogTitle>
-                <DialogDescription>
-                  Create a new admin user with specific permissions.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="name" className="text-right">
-                    Name
-                  </Label>
-                  <Input
-                    id="name"
-                    placeholder="Full name"
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="email" className="text-right">
-                    Email
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Email address"
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="role" className="text-right">
-                    Role
-                  </Label>
-                  <Select>
-                    <SelectTrigger className="col-span-3">
-                      <SelectValue placeholder="Select role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="super-admin">Super Admin</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="editor">Editor</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="password" className="text-right">
-                    Password
-                  </Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="Create password"
-                    className="col-span-3"
-                  />
-                </div>
+              <DialogTitle></DialogTitle>
+              <div className="flex justify-center items-center p-4 md:p-6">
+                <Card className="w-full max-w-md">
+                  <CardHeader>
+                    <CardTitle className="text-2xl">Add Admin</CardTitle>
+                    <CardDescription>
+                      Create a new administrator account
+                    </CardDescription>
+                  </CardHeader>
+                  <form onSubmit={handleAddAdmin}>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="name">Name</Label>
+                        <Input
+                          id="name"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          placeholder="Enter name"
+                          required
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="Enter email"
+                          required
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="password">Password</Label>
+                        <Input
+                          id="password"
+                          type="password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="Enter password"
+                          required
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="status">Status</Label>
+                        <Select
+                          value={status}
+                          onValueChange={setStatus}
+                          required
+                        >
+                          <SelectTrigger id="status">
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="ACTIVE">ACTIVE</SelectItem>
+                            <SelectItem value="BLOCK">BLOCK</SelectItem>
+                            <SelectItem value="DELETE">DELETE</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="type">Admin Type</Label>
+                        <Select value={type} onValueChange={setType} required>
+                          <SelectTrigger id="type">
+                            <SelectValue placeholder="Select admin type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="ADMIN">ADMIN</SelectItem>
+                            <SelectItem value="SUBADMIN">SUBADMIN</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </CardContent>
+
+                    <CardFooter>
+                      <Button
+                        type="submit"
+                        className="w-full"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? "Adding..." : "Add Admin"}
+                      </Button>
+                    </CardFooter>
+                  </form>
+                </Card>
               </div>
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsAddAdminOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button onClick={() => setIsAddAdminOpen(false)}>
-                  Create Admin
-                </Button>
-              </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
