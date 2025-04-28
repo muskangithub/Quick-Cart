@@ -25,7 +25,7 @@ import { useParams, useRouter } from "next/navigation";
 
 export default function ProductDetails() {
   const param = useParams();
-  const router=useRouter()
+  const router = useRouter();
   const [productsDetail, setProductsDetail] = useState([]);
   useEffect(() => {
     getProducts();
@@ -96,7 +96,7 @@ export default function ProductDetails() {
       {/* Back button */}
       <Button
         variant="ghost"
-        onClick={()=>router.push('/product')}
+        onClick={() => router.push("/product")}
         className="mb-6 hover:bg-transparent hover:text-gray-700 p-0 h-auto"
       >
         <ChevronLeft className="mr-1 h-4 w-4" />

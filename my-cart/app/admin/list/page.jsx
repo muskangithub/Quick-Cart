@@ -35,7 +35,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 const ListAdmin = () => {
   const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const ListAdmin = () => {
     }
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status) => {
     switch (status) {
       case "ACTIVE":
         return <Badge className="bg-green-500">Active</Badge>;
@@ -78,7 +78,7 @@ const ListAdmin = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
@@ -86,7 +86,7 @@ const ListAdmin = () => {
     });
   };
 
-  const handleDeleteClick = (id: string) => {
+  const handleDeleteClick = (id) => {
     setDeleteId(id);
     setIsDeleteDialogOpen(true);
   };
@@ -98,7 +98,7 @@ const ListAdmin = () => {
     setIsDeleteDialogOpen(false);
   };
 
-  const deleteAdmin = async (id: string) => {
+  const deleteAdmin = async (id) => {
     try {
       // Try to call the API
       const response = await axios.delete(`http://localhost:5000/admin/${id}`);

@@ -1,21 +1,14 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { toast } from "sonner";
-import Image from "next/image";
-import { Search, ShoppingCart, Heart, Edit, Trash2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import axios from "axios";
+import { Edit, Heart, Search, ShoppingCart, Trash2 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function Page() {
   const [products, setProducts] = useState([]);
@@ -90,64 +83,63 @@ export default function Page() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product) => (
-          <Card
-            key={product._id}
-            className="overflow-hidden transition-all duration-300 hover:shadow-lg"
-          >
-            <div className="relative h-64 w-full overflow-hidden bg-gray-100">
-              <Image
-                src={`http://localhost:5000/${product.ImageUrl}`}
-                alt={product.name}
-                className="object-cover transition-transform duration-300 hover:scale-105"
-                fill
-              />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-2 right-2 bg-white/80 hover:bg-white rounded-full"
-              >
-                <Heart className="h-5 w-5 text-gray-600 hover:text-rose-500" />
-              </Button>
-            </div>
-            <CardContent className="pt-4">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h3 className="font-semibold text-lg">{product.name}</h3>
-                  <p className="text-sm text-gray-500 capitalize">
-                    {product.brand}
-                  </p>
-                </div>
-                <Badge
-                  variant="outline"
-                  className="font-semibold text-emerald-600 border-emerald-200 bg-emerald-50"
+          <Link href={`/product/${product._id}`} key={product._id}>
+            <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg">
+              <div className="relative h-64 w-full overflow-hidden bg-gray-100">
+                <Image
+                  src={`http://localhost:5000/${product.ImageUrl}`}
+                  alt={product.name}
+                  className="object-cover transition-transform duration-300 hover:scale-105"
+                  fill
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-2 right-2 bg-white/80 hover:bg-white rounded-full"
                 >
-                  ${product.price}
-                </Badge>
+                  <Heart className="h-5 w-5 text-gray-600 hover:text-rose-500" />
+                </Button>
               </div>
-            </CardContent>
-            <CardFooter className="flex gap-2 pt-0">
-              <Link href={`/product/${product._id}`}>
-                <Button variant="default" className="flex-1">
-                  <ShoppingCart className="mr-2 h-4 w-4" />
-                  Purchase
-                </Button>
-              </Link>
+              <CardContent className="pt-4">
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <h3 className="font-semibold text-lg">{product.name}</h3>
+                    <p className="text-sm text-gray-500 capitalize">
+                      {product.brand}
+                    </p>
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className="font-semibold text-emerald-600 border-emerald-200 bg-emerald-50"
+                  >
+                    ${product.price}
+                  </Badge>
+                </div>
+              </CardContent>
+              <CardFooter className="flex gap-2 pt-0">
+                <Link href={`/product/${product._id}`}>
+                  <Button variant="default" className="flex-1">
+                    <ShoppingCart className="mr-2 h-4 w-4" />
+                    Purchase
+                  </Button>
+                </Link>
 
-              <Link href={`/update/${product._id}`}>
-                <Button variant="outline" size="icon">
-                  <Edit className="h-4 w-4" />
+                <Link href={`/update/${product._id}`}>
+                  <Button variant="outline" size="icon">
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                  onClick={() => deleteProduct(product._id)}
+                >
+                  <Trash2 className="h-4 w-4" />
                 </Button>
-              </Link>
-              <Button
-                variant="outline"
-                size="icon"
-                className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                onClick={() => deleteProduct(product._id)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </CardFooter>
-          </Card>
+              </CardFooter>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>

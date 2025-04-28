@@ -2,10 +2,10 @@
 
 import {
   ArrowLeft,
-  CreditCard,
   Download,
-  MoreHorizontal,
   Search,
+  CreditCard,
+  MoreHorizontal,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -36,9 +36,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 
-export function PaymentsPanel() {
+export default function Payment() {
   return (
     <div className="flex flex-col min-h-screen">
+      {/* Top Bar */}
       <div className="flex items-center p-4 border-b md:p-6">
         <Link href="/dashboard" className="mr-4">
           <Button variant="ghost" size="icon">
@@ -59,6 +60,8 @@ export function PaymentsPanel() {
           </Button>
         </div>
       </div>
+
+      {/* Content */}
       <div className="p-4 md:p-6 flex-1">
         <Card>
           <CardHeader className="flex flex-row items-center">
@@ -79,6 +82,7 @@ export function PaymentsPanel() {
               </div>
             </div>
           </CardHeader>
+
           <CardContent>
             <Table>
               <TableHeader>
@@ -92,6 +96,7 @@ export function PaymentsPanel() {
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
+
               <TableBody>
                 {payments.map((payment) => (
                   <TableRow key={payment.id}>
@@ -105,8 +110,8 @@ export function PaymentsPanel() {
                           payment.status === "Completed"
                             ? "default"
                             : payment.status === "Pending"
-                              ? "secondary"
-                              : "destructive"
+                            ? "secondary"
+                            : "destructive"
                         }
                       >
                         {payment.status}
@@ -140,13 +145,14 @@ export function PaymentsPanel() {
               </TableBody>
             </Table>
           </CardContent>
+
         </Card>
       </div>
     </div>
   );
 }
 
-// Sample Data
+// 🔥 Sample Payment Data
 const payments = [
   {
     id: "TRX-38291",

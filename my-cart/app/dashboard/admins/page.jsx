@@ -94,7 +94,7 @@ export default function AdminsPanel() {
       toast.error("Failed to fetch products");
     }
   };
-  const deleteAdmin = async (id: string) => {
+  const deleteAdmin = async (id) => {
     try {
       await axios.delete(`http://localhost:5000/admin/${id}`);
       toast.success("Admin deleted");
