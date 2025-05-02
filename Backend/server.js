@@ -204,6 +204,17 @@ app.delete("/admin/:id", async (req, res) => {
   }
 });
 
+//update data
+app.put("/product/:id", async (req, resp) => {
+  console.log(req.params.id, "req.params.id");
+  let result = await Product.updateOne(
+    { _id: req.params.id },
+    { $set: req.body }
+  );
+  console.log(result);
+  resp.send(result);
+});
+
 function authPage(permissions) {
   return (req, resp, next) => {
     const userType = req.body.type;
