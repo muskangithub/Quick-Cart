@@ -3,16 +3,21 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  Sheet,
+  SheetTrigger
+} from "@/components/ui/sheet";
 import axios from "axios";
-import { Edit, Heart, Search, ShoppingCart, Trash2,Pencil } from "lucide-react";
+import { Heart, Pencil, Search, ShoppingCart, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
-import UpdateProductSheet from '../dashboard/product/update'
+import UpdateProductSheet from '../dashboard/product/update';
 
 export default function Products({role}) {
   const [products, setProducts] = useState([]);
+    const [open, setOpen] = useState(false)
 
   useEffect(() => {
     getProducts();
@@ -118,14 +123,17 @@ export default function Products({role}) {
 
                 {role==='admin'&&
                 <>
-                <UpdateProductSheet
-                  productId={product._id}
-                  triggerButton={
+                <Sheet open={open} onOpenChange={setOpen}>
+                <SheetTrigger >
                     <Button variant="outline" size="icon">
                       <Pencil className="h-4 w-4" />
                     </Button>
-                  }
+                    </SheetTrigger>
+                <UpdateProductSheet
+                setOpen={setOpen}
+                  product={product}
                 />
+                    </Sheet>
                 <Button
                   variant="outline"
                   size="icon"
